@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: django.Dockerfile
+    command: bash -c "python3 /app/manage.py makemigrations
+                      && python3 /app/manage.py migrate
+                      && cd /app/ && gunicorn django_in_docker.wsgi:application --bind 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    container_name: django
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - /static:/static
+      - .:/app
+    networks:
+      - super_network
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/posgresql/data/
+    environment:
+      - POSTGRES_DB=test_db
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    ports:
+      - "5432:5432"
+    container_name: postgres
+    networks:
+      - super_network
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    container_name: redis
+    networks:
+      - super_network
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/nginx.Dockerfile
+    depends_on:
+      - django
+    ports:
+      - "80:80"
+    volumes:
+      - /static:/static
+    container_name: nginx
+    networks:
+      - super_network
+
+volumes:
+  postgres_data:
+
+networks:
+  super_network:
+    external:
+      name: super_network
