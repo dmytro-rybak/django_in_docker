@@ -2,7 +2,7 @@
 
 ### Create docker network
 ```shell
-docker create network super_network
+docker network create super_network
 ```
 
 ### Start frontend
