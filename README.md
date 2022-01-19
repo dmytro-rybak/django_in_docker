@@ -30,6 +30,6 @@ make superuser
 ```
 
 ### Endpoints:
-> / - frontend
+> http://localhost - frontend
 > 
-> /api - rest_framework
+> http://localhost/api/ - rest_framework
