@@ -5,10 +5,7 @@ services:
     build:
       context: .
       dockerfile: django.Dockerfile
-    command: bash -c "python3 /app/manage.py makemigrations
-                      && python3 /app/manage.py migrate
-                      && python3 /app/manage.py collectstatic --noinput
-                      && cd /app/ && gunicorn django_in_docker.wsgi:application --bind 0.0.0.0:8000"
+    command: "bash django-prepare.sh"
     ports:
       - "8000:8000"
     container_name: django
